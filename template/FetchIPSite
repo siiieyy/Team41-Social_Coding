@@ -1,0 +1,79 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .info {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Get IP Information</h1>
+        <button id="fetchIpInfo">Fetch IP Info</button>
+        <div class="info" id="ipInfo" style="display: none;"></div>
+    </div>
+
+    <script>
+        document.getElementById('fetchIpInfo').addEventListener('click', function() {
+            fetch('/get_ip_info')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('ipInfo').innerHTML = 'Error retrieving IP information: ' + data.error;
+                    } else {
+                        const ipInfo = `
+                            <strong>IPv4 Address:</strong> ${data.ip}<br>
+                            <strong>IPv6 Address:</strong> ${data.ipv6}<br>
+                            <strong>Location:</strong> ${data.city}, ${data.region}, ${data.country_name}<br>
+                            <strong>Postal Code:</strong> ${data.postal}<br>
+                            <strong>ISP:</strong> ${data.org}<br>
+                            <strong>ASN:</strong> ${data.asn}
+                        `;
+                        document.getElementById('ipInfo').innerHTML = ipInfo;
+                    }
+                    document.getElementById('ipInfo').style.display = 'block';
+                })
+                .catch(error => {
+                    document.getElementById('ipInfo').innerHTML = 'Error retrieving IP information: ' + error;
+                    document.getElementById('ipInfo').style.display = 'block';
+                });
+        });
+    </script>
+</body>
+</html>
